@@ -10,6 +10,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.transaction.Transactional;
 
@@ -29,6 +31,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 import edu.ncsu.csc.CoffeeMaker.common.TestUtils;
+import edu.ncsu.csc.CoffeeMaker.models.Ingredient;
 import edu.ncsu.csc.CoffeeMaker.models.Inventory;
 import edu.ncsu.csc.CoffeeMaker.models.Recipe;
 
@@ -70,10 +73,10 @@ public class APITest {
 		if (!recipe.contains("Mocha")) {
 			//create new mocha recipe if needed
 			final Recipe r = new Recipe();
-			r.setChocolate(5);
-			r.setCoffee(3);
-			r.setMilk(2); 
-			r.setSugar(1); 
+			r.addIngredient(new Ingredient("Chocolate", 5)); 
+			r.addIngredient(new Ingredient("Coffee", 3)); 
+			r.addIngredient(new Ingredient("Milk", 2)); 
+			r.addIngredient(new Ingredient("Sugar", 1)); 
 			r.setPrice(10); 
 			r.setName("Mocha"); 
 				
@@ -87,7 +90,13 @@ public class APITest {
 		// * Second, ensure that there are enough of each ingredient to make the recipe. 
 		
 		//create new inventory object with 50 of each ingredient
-		final Inventory toAdd = new Inventory(50, 50, 50, 50); 
+		List<Ingredient> ingredients = new ArrayList<Ingredient>();
+		ingredients.add(new Ingredient("Coffee", 50));  
+		ingredients.add(new Ingredient("Chocolate", 50)); 
+		ingredients.add(new Ingredient("Milk", 50)); 
+		ingredients.add(new Ingredient("Sugar", 50)); 
+
+		Inventory toAdd = new Inventory(ingredients); 
 				
 		//[put] is mapped to APIInventoryController.updateInventory(), 
 		//adding the contents of toAdd to the active inventory. 
@@ -117,10 +126,11 @@ public class APITest {
 		if (!recipe.contains("Mocha")) {
 			//create new mocha recipe if needed
 			final Recipe r = new Recipe();
-			r.setChocolate(5);
-			r.setCoffee(3);
-			r.setMilk(2); 
-			r.setSugar(1); 
+			r.addIngredient(new Ingredient("Chocolate", 5)); 
+			r.addIngredient(new Ingredient("Coffee", 3)); 
+			r.addIngredient(new Ingredient("Milk", 2)); 
+			r.addIngredient(new Ingredient("Sugar", 1)); 
+
 			r.setPrice(10); 
 			r.setName("Mocha"); 
 						
@@ -141,10 +151,11 @@ public class APITest {
 		if (!recipe.contains("Mocha")) {
 			//create new mocha recipe if needed
 			final Recipe r = new Recipe();
-			r.setChocolate(5);
-			r.setCoffee(3);
-			r.setMilk(2); 
-			r.setSugar(1); 
+			r.addIngredient(new Ingredient("Chocolate", 5)); 
+			r.addIngredient(new Ingredient("Coffee", 3)); 
+			r.addIngredient(new Ingredient("Milk", 2)); 
+			r.addIngredient(new Ingredient("Sugar", 1)); 
+
 			r.setPrice(10); 
 			r.setName("Mocha"); 
 						

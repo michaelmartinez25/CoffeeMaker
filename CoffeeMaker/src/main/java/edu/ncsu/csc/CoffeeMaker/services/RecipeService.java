@@ -1,11 +1,14 @@
 package edu.ncsu.csc.CoffeeMaker.services;
 
+import java.util.List;
+
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Component;
 
+import edu.ncsu.csc.CoffeeMaker.models.Ingredient;
 import edu.ncsu.csc.CoffeeMaker.models.Recipe;
 import edu.ncsu.csc.CoffeeMaker.repositories.RecipeRepository;
 
@@ -32,6 +35,18 @@ public class RecipeService extends Service<Recipe, Long> {
     protected JpaRepository getRepository () {
         return recipeRepository;
     }
+    
+    @Override
+    public void saveAll ( final List<Recipe> list ) {
+    	for (Recipe r : list) {
+    		if (r == null) return;
+    		for (Ingredient i : r.getIngredients()) {
+    			if (i.getAmount() < 0) return;
+    		}
+    	}
+        getRepository().saveAll( list );
+        getRepository().flush();
+    }
 
     /**
      * Find a recipe with the provided name
@@ -41,7 +56,16 @@ public class RecipeService extends Service<Recipe, Long> {
      * @return found recipe, null if none
      */
     public Recipe findByName ( final String name ) {
-        return recipeRepository.findByName( name );
+        Recipe r = recipeRepository.findByName( name );
+        if (r == null) {
+        	return null;
+        }
+        
+        if (r.getIngredients().isEmpty()) return null;
+        for (Ingredient i : r.getIngredients()) {
+        	if (i.getAmount() < 0) return null;
+        }
+        return r;
     }
 
 }
