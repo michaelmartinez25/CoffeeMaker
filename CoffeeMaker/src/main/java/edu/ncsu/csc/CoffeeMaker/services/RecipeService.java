@@ -47,6 +47,19 @@ public class RecipeService extends Service<Recipe, Long> {
         getRepository().saveAll( list );
         getRepository().flush();
     }
+    
+    /**
+     * Update a recipe
+     * @param name
+     * @param recipe
+     */
+    public void update(final String name, final Recipe recipe) {
+    	Recipe r = recipeRepository.findByName( name );
+    	getRepository().delete(r);
+    	r = recipe;
+		getRepository().save(r);
+		getRepository().flush();
+    }
 
     /**
      * Find a recipe with the provided name
