@@ -34,7 +34,7 @@ public class Recipe extends DomainObject {
     private Integer price;
     
     @OneToMany (cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    private final List<Ingredient> ingredients; 
+    private List<Ingredient> ingredients; 
 
     
     /**
@@ -146,6 +146,17 @@ public class Recipe extends DomainObject {
 			if (i.getIngredient().equals(ingredientName)) return i;
 		}
 		return null;
+	}
+	
+	/**
+	 * Updates a recipe
+	 * 
+	 * @param r
+	 */
+	public void updateRecipe(Recipe r) {
+		this.name = r.getName();
+		this.price = r.getPrice();
+		this.ingredients = r.getIngredients();
 	}
 
     /**
