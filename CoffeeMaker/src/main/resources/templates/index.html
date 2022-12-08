@@ -1,21 +1,39 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-<title>Welcome to the CSC326 CoffeeMaker</title>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<title>Welcome to the CSCI2335 CoffeeMaker</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<link rel="stylesheet" href="css/bootstrap.css" />
+	<link rel="stylesheet" href="css/app.css" />
 </head>
 <body>
-	<h1>Coffee Maker</h1>
-	<h2>Available Options</h2>
-	<ul>
-		<li><a href="inventory.html">Update Inventory</a></li>
-<!-- 		<li><a href="staticinventory.html">Static Update Inventory</a></li> -->
-		<li><a href="recipe.html">Add a Recipe</a></li>
-		<li><a href="editrecipe.html">Edit Recipe</a></li>
-<!-- 		<li><a href="staticeditrecipe.html">Static Edit Recipe</a></li> -->
-		<li><a href="deleterecipe.html">Delete Recipe</a></li>
-		<li><a href="makecoffee.html">Make Coffee</a></li>
-		<li><a href="addingredient.html">Add an Ingredient</a></li>
-	</ul>
+
+	<script
+		src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.js"></script>
+	<script>
+	
+	app.controller('menuCtrl', function($scope, $http, $q) {
+	});
+	
+	</script>
+	<div class="title">
+		<h1>Dog Bar Jo</h1>
+		
+	</div>
+	<div class="options">
+		<h2>Available Options</h2>
+		<div class="column">
+			<a class="btn-link" href="inventory.html"><input type="button" value="Update Inventory" class="btn-primary btn"></a>
+			<a class="btn-link" href="addcustomrecipe.html"><input type="button" value="Add a Recipe" class="btn-primary btn"></a>
+			<a class="btn-link" href="editrecipe.html"><input type="button" value="Edit Recipe" class="btn-primary btn"></a>
+		</div>
+		<div class="column">
+			<a class="btn-link" href="deleterecipe.html"><input type="button" value="Delete Recipe" class="btn-primary btn"></a>
+			<a class="btn-link" href="makecoffee.html"><input type="button" value="Make Coffee" class="btn-primary btn"></a>
+			<a class="btn-link" href="addingredient.html"><input type="button" value="Add an Ingredient" class="btn-primary btn"></a>
+		</div>
+	</div>
+	
+	
 </body>
 </html>

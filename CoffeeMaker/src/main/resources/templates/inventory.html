@@ -31,10 +31,7 @@ input.ng-dirty.ng-invalid-min {
 		var app = angular.module('myApp', []);
 		app.controller('inventoryCtrl', function($scope, $http) {
 			$scope.inventoryOriginal = {
-				coffee : '',
-				milk : '',
-				sugar : '',
-				chocolate : ''
+				ingredients: []
 			};
 
 			$scope.getInventory = function() {
@@ -51,14 +48,14 @@ input.ng-dirty.ng-invalid-min {
 
 				$http.put("/api/v1/inventory", $scope.inventory).then(
 						function(response) {
+							$scope.success = true;
 							$scope.getInventory();
 
 						}, function(rejection) {
 							$scope.failure = true;
-							$scope.success = false;
 							console.error("Error while updating Inventory!");
 						});
-				$scope.success = !($scope.failure);
+				/* $scope.success = !($scope.failure); */
 			}
 
 			$scope.submit = function() {
@@ -70,10 +67,7 @@ input.ng-dirty.ng-invalid-min {
 
 			$scope.reset = function() {
 				$scope.inventory = {
-					coffee : '',
-					milk : '',
-					sugar : '',
-					chocolate : ''
+					ingredients: []
 				};
 
 				if (undefined != $scope.addInventoryForm) {
@@ -95,12 +89,9 @@ input.ng-dirty.ng-invalid-min {
 			<div class="panel-heading">
 				<span class="lead">View Inventory</span>
 			</div>
-
-			Coffee: <span id="currentCoffee" ng-bind="inventoryOriginal.coffee"></span><br />
-			Milk: <span id="currentMilk" ng-bind="inventoryOriginal.milk"></span><br />
-			Sugar: <span id="currentSugar" ng-bind="inventoryOriginal.sugar"></span><br />
-			Chocolate: <span id="currentChocolate"
-				ng-bind="inventoryOriginal.chocolate"></span><br />
+			<div ng-repeat="ingredient in inventoryOriginal.ingredients track by $index"> 
+				{{ingredient.ingredient}}: {{ingredient.amount}}<br />
+			</div>
 
 			<div class="panel-heading">
 				<span class="lead">Update Inventory Form </span>
@@ -108,7 +99,28 @@ input.ng-dirty.ng-invalid-min {
 			<div class="formcontainer">
 				<form ng-submit="submit()" name="addInventoryForm"
 					class="form-horizontal">
-					<div class="row">
+					<div ng-repeat="ingredient in inventoryOriginal.ingredients track by $index">
+						<div class="row">
+						<div class="form-group col-md-12">
+							<label class="col-md-2 control-lable" for="file">{{ingredient.ingredient}}</label>
+							<div class="col-md-7">
+								<input type="number" ng-model="inventory.ingredients.ingredient.amount" name="{{ingredient.ingredient}}"
+									class="{{ingredient.ingredient}} form-control input-sm"
+									placeholder="Enter amount of {{ingredient.ingredient}}" required="0" min="0"/>
+								<div class="has-error" ng-show="addInventoryForm.$dirty">
+									<span ng-show="addInventoryForm.{{ingredient.ingredient}}.$error.required">This
+										is a required field.</span> <span
+										ng-show="addInventoryForm.{{ingredient.ingredient}}.$error.min">Minimum
+										amount is 0.</span> <span ng-show="addInventoryForm.{{ingredient.ingredient}}.$invalid">This
+										field is invalid.</span>
+								</div>
+							</div>
+						</div>
+						</div>
+					</div>
+					
+					
+					<!-- <div class="row">
 						<div class="form-group col-md-12">
 							<label class="col-md-2 control-lable" for="file">Coffee</label>
 							<div class="col-md-7">
@@ -181,7 +193,7 @@ input.ng-dirty.ng-invalid-min {
 								</div>
 							</div>
 						</div>
-					</div>
+					</div> -->
 
 
 					<div class="row">

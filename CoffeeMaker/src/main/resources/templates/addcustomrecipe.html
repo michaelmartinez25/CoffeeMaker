@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+
+<head>
+    <title>Add a Custom Recipe</title>
+    <link rel="stylesheet" href="css/bootstrap.css" />
+	<link rel="stylesheet" href="css/app.css" />
+</head>
+<body>
+	<style>
+input.ng-valid {
+	background-color: lightgreen;
+}
+
+input.ng-dirty.ng-invalid-required,input.ng-dirty.ng-invalid-number {
+	background-color: red;
+	opacity: 50%;
+}
+
+input.ng-dirty.ng-invalid-min {
+	background-color: yellow;
+}
+
+
+</style>
+	<script
+		src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.js"></script>
+
+	<script>
+		/*<![CDATA[*/
+		var app = angular.module('myApp', []);
+		app.controller('addRecipeCtrl', function($scope, $http, $q) {
+			
+			console.log("Hit!");
+
+			$scope.reset = function() {
+				$scope.recipe = {
+					name : '',
+					price : '',
+					ingredients: []
+				};
+				if (undefined != $scope.addRecipeForm) {
+					$scope.addRecipeForm.$setPristine(); // reset Form
+				}
+			}
+			
+			function getIngredients() {
+				// gets inventory with id 7290 and empty array of ingredients
+				$http.get("/api/v1/inventory").then(function (response) {
+	  				$scope.inventory = response.data;
+	  				//console.log($scope.inventory);
+					//console.log($scope.inventory.ingredients)
+	  			});
+			}
+			
+			$scope.getRecipes = function getRecipes(){
+				//console.log("getting recipes ... ")
+				$http.get("/api/v1/recipes").then(function(response) {
+					$scope.recipes = response.data;
+					$scope.length = $scope.recipes.length
+					
+					if ($scope.length >= 3){
+						$scope.memoryFull = true; 
+					}
+					//console.log("Memory status (full?): ");
+					//console.log($scope.memoryFull);
+				});
+			}
+
+			getIngredients();
+			$scope.getRecipes(); 
+			
+			$scope.submit = function() {
+				$scope.addRecipe();
+				$scope.getRecipes();
+				$scope.reset();
+				 
+			}
+			
+
+			
+			// add an ingredient to list of ingredients for recipe, add ingredient to display
+			$scope.addIngredient = function(i) {
+				
+				$scope.duplicate = false;
+				
+		        // Make sure user hasnt already added this item
+		        angular.forEach($scope.recipe.ingredients, function(ing) {
+		            if (i.ingredient == ing.ingredient) {
+		            	$scope.duplicate = true; 
+		            }
+	            });
+	
+				if($scope.duplicate) {
+					console.log("Ingredient " + i.ingredient + " is already added to recipe");
+				} else {
+					// need to save a new ingredient with the same name 
+					var ing = {
+							"ingredient": i.ingredient,
+					}
+					$scope.recipe.ingredients.push(ing); 
+				}
+
+			}
+		
+			// remove ingredient from list of ingredients, remove ingredient from display 
+			$scope.removeIngredient = function(item) { 
+				  var index = $scope.recipe.ingredients.indexOf(item);
+				  $scope.recipe.ingredients.splice(index, 1);     
+				}
+	
+			//Add the recipe created in the form to the inventory. 
+			//If there are already 3 recipes in CoffeeMaker, does not allow more to be added. 
+			$scope.addRecipe = function() {
+				
+				$scope.getRecipes();
+				
+				if ($scope.length >= 3) {
+					console.error("Error while adding recipe: too many recipes already exist."); 
+					$scope.memoryFull = true; 
+					return
+				}
+				
+				$scope.success = false;
+				$scope.failure = false;
+				
+				// check if the recipe has ingredients 
+				if ($scope.recipe.ingredients.length == 0) {
+					console.log("Recipe has no ingredients");
+					$scope.failure = true;
+				} else {
+					$http.post("/api/v1/recipes", $scope.recipe).then(
+							function(success) {
+								$scope.success = true;
+								$scope.failure = false;
+								$scope.reset();
+							}, function(rejection) {
+								$scope.failure = true;
+	
+								console.error("Error while adding recipe");
+							});
+				}
+				
+			}
+			$scope.reset();
+			
+
+		});
+
+	</script>
+	<div ng-app="myApp" ng-controller="addRecipeCtrl as ctrl" class="generic-container ng-cloak">
+		<div class="panel panel-default">
+	    	<div class="panel-heading">
+	    		<span class="lead">Add a Custom Recipe</span>
+	    	</div>
+			<div class="formcontainer">
+				<form ng-submit="submit()" name="addCustomRecipeForm"
+					class="form-horizontal ng-pristine ng-invalid ng-invalid-required ng-valid-min">
+
+					<!-- Name Display -->
+					<div class="row">
+						<div class="form-group col-md-12">
+							<label class="col-md-2 control-label" for="file">Name</label>
+							<div class="col-md-7">
+								<input type="text" name="name"
+									class="name form-control input-sm" ng-model="recipe.name"
+									placeholder="Enter recipe name" required="required">
+								<!-- error message -->
+								<div class="has-error" ng-show="addCustomRecipeForm.$dirty">
+									<span ng-show="addCustomRecipeForm.name.$error.required">
+										This is a required field.</span> <span
+										ng-show="addCustomRecipeForm.name.$invalid"> This field
+										is invalid.</span>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<!-- Price Display -->
+					<div class="row">
+						<div class="form-group col-md-12">
+							<label class="col-md-2 control-label" for="file">Price</label>
+							<div class="col-md-7">
+								<input type="number" name="price"
+									class="price form-control input-sm" ng-model="recipe.price"
+									placeholder="Enter recipe price" required="0" min="0">
+								<!-- error message -->
+								<div class="has-error" ng-show="addCustomRecipeForm.$dirty">
+									<span ng-show="addCustomRecipeForm.price.$error.required">
+										This is a required field.</span> <span
+										ng-show="addCustomRecipeForm.price.$error.min"> Minimum
+										amount is 0.</span> <span
+										ng-show="addCustomRecipeForm.price.$invalid"> This
+										field is invalid.</span>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<!-- Ingredients Display  -->
+					<div class="row" ng-repeat="item in recipe.ingredients track by $index">
+						<div class="form-group col-md-12">
+							<label class="col-md-2 control-label" for="file">{{
+								item.ingredient }}</label>
+							<div class="col-md-7">
+								<!-- ng-model is set to the amount of the ingredient in the array at $index -->
+								<input type="number" name="{{ item.ingredient }}"
+									class="ingredient form-control input-sm" ng-model="recipe.ingredients[$index].amount"
+									placeholder="Enter amount of {{ item.ingredient }}" required="true"
+									min="1">
+							</div>
+							<input type="button" value="Remove Ingredient"
+								ng-click="removeIngredient(item)" class="btn btn-danger btn-sm">
+							<div class="has-error" ng-show="addCustomRecipeForm.$dirty">
+								<span ng-show="addCustomRecipeForm.ingredient.$error.required">
+									This is a required field.</span> <span
+									ng-show="addCustomRecipeForm.ingredient.$error.min"> Minimum
+									amount is 1.</span> <span ng-show="addCustomRecipeForm.ingredient.$invalid">
+									This field is invalid.</span>
+							</div>
+						</div>
+					</div>
+
+					<!-- Add Ingredients Dropdown -->
+					<div class="row">
+						<div class="form-Actions centered">
+							<form name="addNewIngredient">
+								<select class="btn" ng-model="i" ng-options="ing.ingredient for ing in inventory.ingredients"
+								required="true">
+									<option value="" selected disabled>--Add new ingredient--</option>
+									<input type="button" value="Add Ingredient" ng-click="addIngredient(i)"
+									class="btn btn-primary-btn margin-side" ng-disabled="!i">
+								</select>
+							</form>
+						</div>
+					</div>
+											
+					<!-- Buttons -->
+					<div class="row">
+						<div class="form-actions floatRight">
+							<input type="submit" value="Add Recipe"
+								class="btn btn-primary btn-sm" ng-click="addRecipe()"
+ 								ng-disabled="addCustomRecipeForm.$invalid || memoryFull">
+							<button type="button" class="btn btn-warning btn-sm"
+								ng-click="reset()" ng-disabled="addCustomRecipeForm.$pristine">
+								Reset Form</button>
+						</div>
+					</div>
+
+				</form>
+			</div>
+			<div ng-show="success">Recipe Created</div>
+			<div ng-show="failure" style="color:red">Error while adding recipe.</div>
+			<div ng-if="memoryFull" style="color:red">Cannot add recipes: the maximum number of stored recipes has already been reached.</div>
+			<div ng-if="duplicate" style="color:red">Cannot add duplicate ingredients.</div>
+		</div>
+	  <a href="/index">Home</a>
+	  </div>
+
+
+	  
+</body>
