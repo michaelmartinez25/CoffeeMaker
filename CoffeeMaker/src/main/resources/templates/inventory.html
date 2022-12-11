@@ -52,9 +52,6 @@ input.ng-dirty.ng-invalid-min {
 			$scope.updateInventory = function() {
 				$scope.success = false;
 				$scope.failure = false;
-
-				console.log($scope.inventoryOriginal);
-				console.log($scope.inventory);
 				
 				angular.forEach($scope.inventoryOriginal.ingredients, function(ingredient, index) {
 					$scope.inventory.ingredients[index].ingredient = ingredient.ingredient;

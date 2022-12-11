@@ -55,9 +55,10 @@ public class RecipeService extends Service<Recipe, Long> {
      */
     public void update(final String name, final Recipe recipe) {
     	Recipe r = recipeRepository.findByName( name );
-    	getRepository().delete(r);
-    	r = recipe;
-		getRepository().save(r);
+//    	getRepository().delete(r);
+//    	r = recipe;
+    	r.updateRecipe(recipe);
+    	getRepository().save(r);
 		getRepository().flush();
     }
 
