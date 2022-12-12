@@ -4,6 +4,9 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.transaction.Transactional;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -17,6 +20,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 
 import edu.ncsu.csc.CoffeeMaker.common.TestUtils;
+import edu.ncsu.csc.CoffeeMaker.models.Ingredient;
 import edu.ncsu.csc.CoffeeMaker.models.Inventory;
 import edu.ncsu.csc.CoffeeMaker.models.Recipe;
 import edu.ncsu.csc.CoffeeMaker.services.InventoryService;
@@ -43,24 +47,32 @@ public class APICoffeeTest {
     public void setup () {
 
         final Inventory ivt = iService.getInventory();
-
-        ivt.setChocolate( 15 );
-        ivt.setCoffee( 15 );
-        ivt.setMilk( 15 );
-        ivt.setSugar( 15 );
+        
+        List<Ingredient> ingredients = new ArrayList<Ingredient>();
+        
+        ingredients.add(new Ingredient("Chocolate", 15)); 
+        ingredients.add(new Ingredient("Coffee", 15)); 
+        ingredients.add(new Ingredient("Milk", 15)); 
+        ingredients.add(new Ingredient("Sugar", 15)); 
+        
+        ivt.addIngredients(ingredients); 
 
         iService.save( ivt );
 
         final Recipe recipe = new Recipe();
         recipe.setName( "Coffee" );
         recipe.setPrice( 50 );
-        recipe.setCoffee( 3 );
-        recipe.setMilk( 1 );
-        recipe.setSugar( 1 );
-        recipe.setChocolate( 0 );
+        recipe.addIngredient(new Ingredient("Coffee", 3));
+        recipe.addIngredient(new Ingredient("Milk", 1));
+        recipe.addIngredient(new Ingredient("Sugar", 1));
+
         service.save( recipe );
     }
 
+    /**
+     * Test purchasing a beverage. 
+     * @throws Exception
+     */
     @Test
     @Transactional
     public void testPurchaseBeverage1 () throws Exception {
@@ -92,7 +104,7 @@ public class APICoffeeTest {
         /* Insufficient inventory */
 
         final Inventory ivt = iService.getInventory();
-        ivt.setCoffee( 0 );
+        ivt.setIngredientAmount("Coffee", 0);
         iService.save( ivt );
 
         final String name = "Coffee";

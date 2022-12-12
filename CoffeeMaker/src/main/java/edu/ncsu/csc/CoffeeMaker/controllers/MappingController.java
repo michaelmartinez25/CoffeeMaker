@@ -39,7 +39,32 @@ public class MappingController {
     public String addRecipePage ( final Model model ) {
         return "recipe";
     }
+    
+    /**
+     * On a GET request to /recipe/custom, the RecipeController will return
+     * /src/main/resources/templates/addCustomRecipe.html
+     * 
+     * @param model : underlying UI model
+     * @return contents of the page
+     */
+    @GetMapping ( { "/addcustomrecipe", "/addcustomrecipe.html" } )
+    public String addCustomRecipePage ( final Model model ) {
+    	return "addcustomrecipe";
+    }
 
+    /**
+     * On a GET request to /addIngredient, the AddIngredientController will return
+     * /src/main/resources/templates/addingredient.html.
+     * 
+     * @param model
+     * 			underlying UI model
+     * @return contents of the page
+     */
+    @GetMapping ( {"/addingredient", "/addingredient.html" } )
+    public String addIngredientPage ( final Model model ) {
+    	return "addingredient";
+    }
+    
     /**
      * On a GET request to /deleterecipe, the DeleteRecipeController will return
      * /src/main/resources/templates/deleterecipe.html.
@@ -65,7 +90,8 @@ public class MappingController {
     public String editRecipeForm ( final Model model ) {
         return "editrecipe";
     }
-
+    
+   
     /**
      * Handles a GET request for inventory. The GET request provides a view to
      * the client that includes the list of the current ingredients in the
@@ -92,6 +118,34 @@ public class MappingController {
     @GetMapping ( { "/makecoffee", "/makecoffee.html" } )
     public String makeCoffeeForm ( final Model model ) {
         return "makecoffee";
+    }
+    
+    /**
+     * On a GET request to /editrecipe, the EditRecipeController will return
+     * /src/main/resources/templates/editrecipe.html.
+     *
+     * @param model
+     *            underlying UI model
+     * @return contents of the page
+     */
+    @GetMapping ( { "/staticeditrecipe", "/staticeditrecipe.html" } )
+    public String staticEditRecipeForm ( final Model model ) {
+        return "staticeditrecipe";
+    }
+
+    /**
+     * Handles a GET request for inventory. The GET request provides a view to
+     * the client that includes the list of the current ingredients in the
+     * inventory and a form where the client can enter more ingredients to add
+     * to the inventory.
+     *
+     * @param model
+     *            underlying UI model
+     * @return contents of the page
+     */
+    @GetMapping ( { "/staticinventory", "/staticinventory.html" } )
+    public String staticInventoryForm ( final Model model ) {
+        return "staticinventory";
     }
 
 }

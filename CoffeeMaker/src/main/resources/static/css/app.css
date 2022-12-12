@@ -1,3 +1,9 @@
+@import url('https://fonts.googleapis.com/css2?family=Lato&family=Montserrat&family=Playfair+Display:wght@400;900&family=Roboto&display=swap');
+
+* {
+	font-family: 'Roboto';
+}
+
 body, #mainWrapper {
 	height: 70%;
 	background-color: rgb(245, 245, 245);
@@ -6,6 +12,30 @@ body, #mainWrapper {
 body, .form-control {
 	font-size: 12px !important;
 }
+
+h2 {
+	font-family: 'Playfair Display';
+	font-weight: 500;
+	margin: 0.25em 0.5em;
+	text-align: left;
+	color: antiquewhite;
+}
+
+h1 { 
+	font-family: 'Playfair Display';
+	font-weight: 900;
+	color: #008e0a;
+	text-align: center;
+}
+
+.title { 
+	background-color: antiquewhite; 
+	border-radius: 100%;
+	width: 175px;
+	height: 175px;
+	display: flex;
+	justify-content: center;
+	flex-direction: column;}
 
 .floatRight {
 	float: right;
@@ -59,4 +89,77 @@ body, .form-control {
 
 .email.ng-dirty.ng-invalid-required {
 	background-color: red;
+}
+
+.centered {
+	margin: auto;
+	width: 70%;
+	padding: 10px
+}
+
+.delete-btn {
+	display: inline-block;
+	padding:5px;
+}
+
+.delete-btn {
+    font-weight: bold;
+    color: black;
+    border: 1.5px solid red;
+    border-radius: 10px;
+    background-color: red;
+	display: inline-block;
+	padding:3px;
+	opacity: 0.75;
+    text-align: center;
+}
+.options {
+	margin: 1em;
+	padding: 0.5em;
+	display: flex-box;
+}
+
+.column {
+	padding: 0.5em;
+}
+
+.btn-link {
+	padding: 0.5em;
+	color: antiquewhite;
+}
+
+.margin-side { 
+	margin: 0em 0.5em;
+}
+
+
+html {
+
+    box-sizing: border-box;
+    --bgColorMenu : #1d1d27;
+    --duration: .7s;    
+
+}
+
+html *,
+html *::before,
+html *::after {
+
+    box-sizing: inherit;
+
+}
+
+body{
+    
+    margin: 0;
+    display: flex;
+    height: 100vh;
+    overflow: hidden;
+    align-items: center;
+    justify-content: center;
+    background-color: #008e0a;
+    /* opacity: 75%; */
+    -webkit-tap-highlight-color: transparent;
+    transition: background-color var(--duration);
+
 }

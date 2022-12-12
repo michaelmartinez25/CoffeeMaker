@@ -15,6 +15,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.annotation.Transactional;
 
 import edu.ncsu.csc.CoffeeMaker.TestConfig;
+import edu.ncsu.csc.CoffeeMaker.models.Ingredient;
 import edu.ncsu.csc.CoffeeMaker.models.Recipe;
 import edu.ncsu.csc.CoffeeMaker.services.RecipeService;
 
@@ -38,19 +39,11 @@ public class RecipeTest {
         final Recipe r1 = new Recipe();
         r1.setName( "Black Coffee" );
         r1.setPrice( 1 );
-        r1.setCoffee( 1 );
-        r1.setMilk( 0 );
-        r1.setSugar( 0 );
-        r1.setChocolate( 0 );
         service.save( r1 );
 
         final Recipe r2 = new Recipe();
         r2.setName( "Mocha" );
         r2.setPrice( 1 );
-        r2.setCoffee( 1 );
-        r2.setMilk( 1 );
-        r2.setSugar( 1 );
-        r2.setChocolate( 1 );
         service.save( r2 );
 
         final List<Recipe> recipes = service.findAll();
@@ -68,19 +61,14 @@ public class RecipeTest {
         final Recipe r1 = new Recipe();
         r1.setName( "Tasty Drink" );
         r1.setPrice( 12 );
-        r1.setCoffee( -12 );
-        r1.setMilk( 0 );
-        r1.setSugar( 0 );
-        r1.setChocolate( 0 );
+        Ingredient c = new Ingredient("coffee", -12); 
+        r1.addIngredient(c);
 
         final Recipe r2 = new Recipe();
         r2.setName( "Mocha" );
+        c = new Ingredient("coffee", 1);
+        r2.addIngredient(c);
         r2.setPrice( 1 );
-        r2.setCoffee( 1 );
-        r2.setMilk( 1 );
-        r2.setSugar( 1 );
-        r2.setChocolate( 1 );
-
         final List<Recipe> recipes = List.of( r1, r2 );
 
         try {
@@ -274,6 +262,19 @@ public class RecipeTest {
 
     @Test
     @Transactional
+    public void testFindIngredientByName() { 
+    	Recipe r = new Recipe();
+    	r.setName("Latte");
+    	Ingredient i = new Ingredient("coffee", 2);
+    	r.addIngredient(i);
+    	r.addIngredient(new Ingredient("milk", 4));
+    	
+    	Ingredient dbI = r.findIngredientByName("coffee");
+    	Assertions.assertEquals(i, dbI, "Ingredient pulled from database should be equal to the ingredient set in the recipe");
+    }
+    
+    @Test
+    @Transactional
     public void testEditRecipe1 () {
         Assertions.assertEquals( 0, service.findAll().size(), "There should be no Recipes in the CoffeeMaker" );
 
@@ -287,13 +288,16 @@ public class RecipeTest {
         final Recipe retrieved = service.findByName( "Coffee" );
 
         Assertions.assertEquals( 70, (int) retrieved.getPrice() );
-        Assertions.assertEquals( 3, (int) retrieved.getCoffee() );
-        Assertions.assertEquals( 1, (int) retrieved.getMilk() );
-        Assertions.assertEquals( 1, (int) retrieved.getSugar() );
-        Assertions.assertEquals( 0, (int) retrieved.getChocolate() );
-
+        Assertions.assertEquals(3, r1.findIngredientByName("coffee").getAmount());
+        Assertions.assertEquals(1, r1.findIngredientByName("milk").getAmount());
+        Assertions.assertEquals(1, r1.findIngredientByName("sugar").getAmount());
+        Assertions.assertEquals(0, r1.findIngredientByName("chocolate").getAmount());
         Assertions.assertEquals( 1, service.count(), "Editing a recipe shouldn't duplicate it" );
-
+        
+        Recipe r2 = new Recipe(); 
+        
+        Assertions.assertNull(r2.findIngredientByName("coffee"));
+        
     }
     
     /**
@@ -303,42 +307,12 @@ public class RecipeTest {
     @Transactional
     public void testCheckRecipe() {
     	final Recipe r1 = new Recipe(); 
-
-    	r1.setCoffee(0);
-    	r1.setMilk(0);
-    	r1.setSugar(0);
-    	r1.setChocolate(0);
-
+    	
     	Assertions.assertTrue(r1.checkRecipe());
 
-    	r1.setCoffee(3);
-
+    	r1.addIngredient(new Ingredient("chocolate", 2));
+    	
     	Assertions.assertFalse(r1.checkRecipe());
-
-    	r1.setMilk(2);
-
-    	Assertions.assertFalse(r1.checkRecipe());
-
-    	r1.setSugar(2);
-
-    	Assertions.assertFalse(r1.checkRecipe());
-
-    	r1.setChocolate(2);
-
-    	Assertions.assertFalse(r1.checkRecipe());
-
-    	r1.setCoffee(0);
-
-    	Assertions.assertFalse(r1.checkRecipe());
-
-    	r1.setMilk(0);
-
-    	Assertions.assertFalse(r1.checkRecipe());
-
-    	r1.setSugar(0);
-
-    	Assertions.assertFalse(r1.checkRecipe());
-
     }
 
     /**
@@ -397,19 +371,26 @@ public class RecipeTest {
 
     	r1.setName("Mocha");
 
-    	Assertions.assertEquals("Mocha", r1.toString()); 
+    	Assertions.assertEquals("Mocha with ingredients \n", r1.toString()); 
     }
 
     private Recipe createRecipe ( final String name, final Integer price, final Integer coffee, final Integer milk,
             final Integer sugar, final Integer chocolate ) {
         final Recipe recipe = new Recipe();
+        
         recipe.setName( name );
         recipe.setPrice( price );
-        recipe.setCoffee( coffee );
-        recipe.setMilk( milk );
-        recipe.setSugar( sugar );
-        recipe.setChocolate( chocolate );
-
+        
+        Ingredient cof = new Ingredient("coffee", coffee); 
+        Ingredient choc = new Ingredient("chocolate", chocolate); 
+        Ingredient m = new Ingredient("milk", milk); 
+        Ingredient s = new Ingredient("sugar", sugar); 
+        
+        recipe.addIngredient(cof);
+        recipe.addIngredient(choc);
+        recipe.addIngredient(m);
+        recipe.addIngredient(s);
+        
         return recipe;
     }
 
